@@ -1,31 +1,24 @@
-import React, { useState }
-    from 'react';
-import {View,Text,FlatList,TextInput,Button,
-        ScrollView,Modal,StyleSheet,TouchableOpacity,
-} from 'react-native';
-
-import initialJobData
-    from '../screens/initialJobData';
+import React, { useState } from 'react';
+import { View, Text, FlatList, TextInput, Button, ScrollView, Modal, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import initialJobData from '../screens/initialJobData';
 
 const Home = () => {
-
-  const [jobData, setJobData] = useState(initialJobData);
+    const [jobData, setJobData] = useState(initialJobData);
     const [showFilters, setShowFilters] = useState(true);
     const [titleFilter, setTitleFilter] = useState('');
     const [companyFilter, setCompanyFilter] = useState('');
     const [locationFilter, setLocationFilter] = useState('');
     const [selectedJob, setSelectedJob] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const navigation = useNavigation();
 
     const applyFilters = () => {
         const filteredJobs = initialJobData.filter(
             (job) =>
-                job.title.toLowerCase()
-                    .includes(titleFilter.toLowerCase()) &&
-                job.company.toLowerCase()
-                    .includes(companyFilter.toLowerCase()) &&
-                job.location.toLowerCase()
-                    .includes(locationFilter.toLowerCase())
+                job.title.toLowerCase().includes(titleFilter.toLowerCase()) &&
+                job.company.toLowerCase().includes(companyFilter.toLowerCase()) &&
+                job.location.toLowerCase().includes(locationFilter.toLowerCase())
         );
         setJobData(filteredJobs);
         setShowFilters(false);
@@ -36,23 +29,12 @@ const Home = () => {
     };
 
     const renderJobItem = ({ item }) => (
-        <TouchableOpacity
-            onPress={
-                () => handleViewDetails(item)
-            }>
+        <TouchableOpacity onPress={() => handleViewDetails(item)}>
             <View style={styles.jobItem}>
-                <Text style={styles.jobTitle}>
-                    {item.title}
-                </Text>
-                <Text style={styles.jobCompany}>
-                    {item.company}
-                </Text>
-                <Text style={styles.jobLocation}>
-                    {item.location}
-                </Text>
-                <Text style={styles.jobDescription}>
-                    {item.description}
-                </Text>
+                <Text style={styles.jobTitle}>{item.title}</Text>
+                <Text style={styles.jobCompany}>{item.company}</Text>
+                <Text style={styles.jobLocation}>{item.location}</Text>
+                <Text style={styles.jobDescription}>{item.description}</Text>
             </View>
         </TouchableOpacity>
     );
@@ -62,41 +44,28 @@ const Home = () => {
         setIsModalVisible(true);
     };
 
+    const handleApply = () => {
+        setIsModalVisible(false);
+        navigation.navigate('Apply', { job: selectedJob });
+    };
+
     const renderJobDetailsModal = () => {
         if (!selectedJob) {
             return null;
         }
 
-  return (
-     <Modal
-                animationType="slide"
-                transparent={true}
-                visible={isModalVisible}
-                onRequestClose={() => {
-                    setIsModalVisible(false);
-                }}
-            >
+        return (
+            <Modal animationType="slide" transparent={true} visible={isModalVisible} onRequestClose={() => setIsModalVisible(false)}>
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>
-                            {selectedJob.title}
-                        </Text>
-                        <Text style={styles.modalCompany}>
-                            {selectedJob.company}
-                        </Text>
-                        <Text style={styles.modalLocation}>
-                            {selectedJob.location}
-                        </Text>
-                        <Text style={styles.modalDescription}>
-                            {selectedJob.description}
-                        </Text>
-                        <Text style={styles.modalApplyMethod}>
-                            {selectedJob.applyMethod}
-                        </Text>
-                        <Button title="Close"
-                            onPress={
-                                () => setIsModalVisible(false)
-                            } />
+                        <Text style={styles.modalTitle}>{selectedJob.title}</Text>
+                        <Text style={styles.modalCompany}>{selectedJob.company}</Text>
+                        <Text style={styles.modalLocation}>{selectedJob.location}</Text>
+                        <Text style={styles.modalDescription}>{selectedJob.description}</Text>
+                        <TouchableOpacity onPress={handleApply}>
+                            <Text style={styles.modalApplyMethod}>{selectedJob.applyMethod}</Text>
+                        </TouchableOpacity>
+                        <Button title="Close" onPress={() => setIsModalVisible(false)} />
                     </View>
                 </View>
             </Modal>
@@ -105,75 +74,38 @@ const Home = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>
-                Job Board App
-            </Text>
-            <Text style={styles.subHeading}>
-                By GeekforGeeks
-            </Text>
+            <Text style={styles.header}>Job Finder</Text>
+            <Text style={styles.subHeading}>Solution By Zeeveture.lk</Text>
 
             <View style={styles.filterContainer}>
                 {showFilters ? (
                     <>
                         <View style={styles.row}>
                             <View style={styles.filterColumn}>
-                                <Text style={styles.filterLabel}>
-                                    Title
-                                </Text>
-                                <TextInput
-                                    style={styles.filterInput}
-                                    value={titleFilter}
-                                    onChangeText={
-                                        (text) =>
-                                            setTitleFilter(text)
-                                    }
-                                />
+                                <Text style={styles.filterLabel}>Title</Text>
+                                <TextInput style={styles.filterInput} value={titleFilter} onChangeText={(text) => setTitleFilter(text)} />
                             </View>
 
                             <View style={styles.filterColumn}>
-                                <Text
-                                    style={styles.filterLabel}>
-                                    Company
-                                </Text>
-                                <TextInput
-                                    style={styles.filterInput}
-                                    value={companyFilter}
-                                    onChangeText={
-                                        (text) =>
-                                            setCompanyFilter(text)
-                                    }
-                                />
+                                <Text style={styles.filterLabel}>Company</Text>
+                                <TextInput style={styles.filterInput} value={companyFilter} onChangeText={(text) => setCompanyFilter(text)} />
                             </View>
 
                             <View style={styles.filterColumn}>
-                                <Text style={styles.filterLabel}>
-                                    Location
-                                </Text>
-                                <TextInput
-                                    style={styles.filterInput}
-                                    value={locationFilter}
-                                    onChangeText={
-                                        (text) =>
-                                            setLocationFilter(text)
-                                    }
-                                />
+                                <Text style={styles.filterLabel}>Location</Text>
+                                <TextInput style={styles.filterInput} value={locationFilter} onChangeText={(text) => setLocationFilter(text)} />
                             </View>
                         </View>
 
-                        <Button title="Apply Filters"
-                            onPress={applyFilters} />
+                        <Button title="Apply Filters" onPress={applyFilters} />
                     </>
                 ) : (
-                    <Button title="Show Filters"
-                        onPress={toggleFilters} />
+                    <Button title="Show Filters" onPress={toggleFilters} />
                 )}
             </View>
 
             <ScrollView>
-                <FlatList data={jobData}
-                    keyExtractor={
-                        (item) =>
-                            item.id} renderItem={renderJobItem} />
+                <FlatList data={jobData} keyExtractor={(item) => item.id} renderItem={renderJobItem} />
             </ScrollView>
             {renderJobDetailsModal()}
         </View>
@@ -186,15 +118,16 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     header: {
-        fontSize: 34,
+        fontSize: 36,
         fontWeight: 'bold',
         marginBottom: 16,
+        marginLeft:45
     },
     subHeading: {
         color: 'green',
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold',
-        marginLeft: 90,
+        marginLeft: 150,
         marginTop: -20,
     },
     filterContainer: {
@@ -284,5 +217,4 @@ const styles = StyleSheet.create({
     },
 });
 
-
-export default Home
+export default Home;
